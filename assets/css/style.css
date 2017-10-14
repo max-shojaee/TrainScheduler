@@ -1,0 +1,17 @@
+*{
+	box-sizing: border-box;
+}
+
+body{
+    background-image: url("../images/unionstation.jpg");
+}
+
+.btn,
+.panel > .panel-heading {
+	background-color: #6E2C00;
+	border-color: #6E2C00;
+}
+
+.panel{
+	border-color: #6E2C00;
+}
