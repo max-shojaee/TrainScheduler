@@ -18,26 +18,44 @@ var database = firebase.database();
 //====================================================================
 function displayTrainInfo(trainName, destination, firstTime, frequency)
 {
-   // First Time (pushed back 1 year to make sure it comes before current time)
-  var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
+  var row = $('<tr></tr>')
+  row.append($('<td></td>').text(trainName))
+  row.append($('<td></td>').text(destination))
+  row.append($('<td></td>').text(frequency))
 
-  // Current Time
-  var currentTime = moment();
+  var next$ = $('<td></td>')
+  var away$ = $('<td></td>')
 
-  // Difference between the times
-  var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+  row.append(next$)
+  row.append(away$)
 
-  // Time apart (remainder)
-  var remainder = diffTime % frequency;
+  $("#train-table > tbody").append(row);
 
-  // Minute Until Train
-  var minutesAway = frequency - remainder;
+  setInterval(updateTimes, 1000)
+  updateTimes()
 
-    // Next Train
-  var nextArrival = moment().add(minutesAway, "minutes");
- 
-  $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" +
-  frequency + "</td><td>" + moment(nextArrival).format("hh:mm a") + "</td><td>" + minutesAway);
+  function updateTimes () {
+    // First Time (pushed back 1 year to make sure it comes before current time)
+    var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
+
+    // Current Time
+    var currentTime = moment();
+
+    // Difference between the times
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+
+    // Time apart (remainder)
+    var remainder = diffTime % frequency;
+
+    // Minute Until Train
+    var minutesAway = frequency - remainder;
+
+      // Next Train
+    var nextArrival = moment().add(minutesAway, "minutes").format("hh:mm a");
+
+    next$.text(nextArrival)
+    away$.text(minutesAway)
+  }
 }
 
 
@@ -51,7 +69,7 @@ function addNewTrain(){
   var trainName = $("#train-name").val().trim();
   var destination = $("#destination").val().trim();
   var firstTime = $("#first-time").val().trim();
-  var frequency = $("#frequency").val().trim(); 
+  var frequency = $("#frequency").val().trim();
 
   database.ref('/trains').push({
         name: trainName,
